@@ -9,14 +9,13 @@
 </head>
 <body>
     <main>
-        <!--Ao clicar no botão submit do form, ele vai procurar se existe a tag form, vai ver qual o method e a action q ele precisa chamar-->
-        <!--Só funciona com botões do tipo submit-->
-        <div class="alert alert-success alert-dismissible fade show" th:if="${mensagem}">
-            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            <span th:text="${mensagem}"></span>
-        </div>
-
-        <form method="post" action="#" th:action="@{/login}" th:object="${usuario}">
+        <form method="post" action="#" th:action="@{/login}" th:object="${login}">
+            <!--Ao clicar no botão submit do form, ele vai procurar se existe a tag form, vai ver qual o method e a action q ele precisa chamar-->
+            <!--Só funciona com botões do tipo submit-->
+            <div class="alert alert-danger alert-dismissible fade show" th:if="${mensagem}">
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                <span class="mensagem" th:text="${mensagem}"></span>
+            </div>
             <div class="row mb-3">
                 <label class="form-label">E-mail</label>
                 <div class="col-sm-5">
@@ -25,7 +24,7 @@
                     </label>
                 </div>
                 <div class="col-sm-5">
-                    <span class="mensagem" type="text"></span>
+                    <span class="mensagem" type="text" th:if="${#fields.hasErrors('email')}" th:erros="*{email}"></span>
                 </div>
             </div>
             <div class="mb-3">
@@ -34,6 +33,9 @@
                     <label>
                         <input type="text" name="senha" class="form-control" th:field="*{senha}">
                     </label>
+                </div>
+                <div class="col-sm-5">
+                    <span class="mensagem" type="text" th:if="${#fields.hasErrors('senha')}" th:erros="*{senha}"></span>
                 </div>
             </div>
 
