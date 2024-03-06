@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciamento de Usuários</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Gerenciamento de Usuários</h1>
+        
+        <div class="filtro">
+            <label for="filtro">Filtrar por nome de usuário:</label>
+            <input type="text" id="filtro" placeholder="Digite o nome do usuário">
+        </div>
+
+        <div class="botoes-container">
+            <button id="cadastrarUsuario" class="botao-cadastrar">Cadastrar Usuário +</button>
+        </div>
+
+        <div id="usuarios">
+            <!-- Tabela de usuários será carregada aqui -->
+        </div>
+    </div>
+
+    <form id="formulario" style="display:none;">
+        <label for="nome">Nome:</label>
+        <input type="text" id="nome" name="nome" required>
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+        <label for="grupo">Grupo:</label>
+        <input type="text" id="grupo" name="grupo">
+        <label for="status">Status:</label>
+        <select id="status" name="status">
+            <option value="Ativo">Ativo</option>
+            <option value="Inativo">Inativo</option>
+        </select>
+        <button type="reset">Cadastrar</button>
+    </form>
+
+    <script src="scripts.js"></script>
+</body>
+</html>
