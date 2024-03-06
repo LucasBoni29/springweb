@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Alterar Perfil</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Alterar Perfil</h1>
+        <form id="formPerfil">
+            <input type="text" id="novoNome" placeholder="Novo Nome">
+            <input type="text" id="novoCpf" placeholder="Novo CPF" disabled>
+            <input type="password" id="novaSenha" placeholder="Nova Senha">
+            <input type="password" id="confirmarSenha" placeholder="Confirmar Nova Senha">
+            <button type="button" onclick="alterarPerfil()">Salvar Alterações</button>
+            <div id="error" class="error"></div>
+        </form>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        function alterarPerfil() {
+            var novoNome = document.getElementById("novoNome").value;
+            var novaSenha = document.getElementById("novaSenha").value;
+            var confirmarSenha = document.getElementById("confirmarSenha").value;
+
+            $.ajax({
+                url: "/alterarPerfil",
+                type: "POST",
+                data: {
+                    novoNome: novoNome,
+                    novaSenha: novaSenha,
+                    confirmarSenha: confirmarSenha
+                },
+                success: function(response) {
+                    alert(response);
+                },
+                error: function(xhr, status, error) {
+                    alert("Erro ao tentar alterar o perfil.");
+                    console.error(error);
+                }
+            });
+        }
+    </script>
+</body>
+</html>
