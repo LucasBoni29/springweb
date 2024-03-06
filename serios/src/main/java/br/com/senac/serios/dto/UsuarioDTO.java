@@ -2,7 +2,6 @@ package br.com.senac.serios.dto;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
-import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -27,7 +26,7 @@ public class UsuarioDTO {
     private String cpf;
 
     @ApiModelProperty(notes = "Indica se o usuário é um estoquista ou administrador")
-    private Integer grupo;
+    private String grupo;
 
     @ApiModelProperty(notes = "Indica se o usuário está inativo ou ativo")
     private Integer status;

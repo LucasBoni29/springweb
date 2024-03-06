@@ -1,16 +1,13 @@
 package br.com.senac.serios.data.domain.entity;
 
 import jakarta.persistence.*;
-
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-
-import org.hibernate.validator.constraints.br.CPF;
-
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.hibernate.validator.constraints.br.CPF;
 
 @Entity
 @Table(name = "usuario")
@@ -41,7 +38,7 @@ public class UsuarioEntity {
     private String cpf;
 
     @Column(nullable = false)
-    private Integer grupo;
+    private String grupo;
 
     @Column(nullable = false)
     private boolean status;
