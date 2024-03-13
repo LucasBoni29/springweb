@@ -1,44 +1,34 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerenciamento de Usuários</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Listagem de Usuários</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
-    <div class="container">
-        <h1>Gerenciamento de Usuários</h1>
-        
-        <div class="filtro">
-            <label for="filtro">Filtrar por nome de usuário:</label>
-            <input type="text" id="filtro" placeholder="Digite o nome do usuário">
-        </div>
-
-        <div class="botoes-container">
-            <button id="cadastrarUsuario" class="botao-cadastrar">Cadastrar Usuário +</button>
-        </div>
-
-        <div id="usuarios">
-            <!-- Tabela de usuários será carregada aqui -->
-        </div>
-    </div>
-
-    <form id="formulario" style="display:none;">
-        <label for="nome">Nome:</label>
-        <input type="text" id="nome" name="nome" required>
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required>
-        <label for="grupo">Grupo:</label>
-        <input type="text" id="grupo" name="grupo">
-        <label for="status">Status:</label>
-        <select id="status" name="status">
-            <option value="Ativo">Ativo</option>
-            <option value="Inativo">Inativo</option>
-        </select>
-        <button type="reset">Cadastrar</button>
-    </form>
-
-    <script src="scripts.js"></script>
+<div class="container">
+    <h2 class="mt-5 mb-4">Listagem de Usuários</h2>
+    <table class="table table-striped table-bordered">
+        <thead class="thead-dark">
+        <tr>
+            <th>ID</th>
+            <th>Nome</th>
+            <th>Email</th>
+            <th>Grupo</th>
+            <th>Status</th>
+        </tr>
+        </thead>
+        <tbody>
+        <!-- Aqui é onde você iterará sobre a lista de usuários no Thymeleaf -->
+        <tr th:each="usuario : ${usuarios}">
+            <td th:text="${usuario.id}"></td>
+            <td th:text="${usuario.nome}"></td>
+            <td th:text="${usuario.email}"></td>
+            <td th:text="${usuario.grupo}"></td>
+            <td th:text="${usuario.status}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
 </body>
 </html>
