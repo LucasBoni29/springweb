@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 public interface LoginRepository extends JpaRepository<UsuarioEntity, Long>{
     boolean existsByEmailAndSenha(@Nullable String email, @Nullable String senha);
 
-    UsuarioDTO findByEmailIgnoreCaseAndSenha(@NonNull String email, @NonNull String senha);
+    UsuarioEntity findByEmailIgnoreCaseAndSenha(@NonNull String email, @NonNull String senha);
 
-    UsuarioDTO findByEmailIgnoreCase(String email);
+    UsuarioEntity findByEmailIgnoreCase(String email);
 }

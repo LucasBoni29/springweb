@@ -1,5 +1,6 @@
 package br.com.senac.serios.service.impl;
 
+import br.com.senac.serios.data.domain.entity.UsuarioEntity;
 import br.com.senac.serios.data.domain.repository.LoginRepository;
 import br.com.senac.serios.dto.UsuarioDTO;
 import br.com.senac.serios.service.LoginService;
@@ -27,15 +28,15 @@ public class LoginServiceImpl implements LoginService {
     }
 
     @Override
-    public String executarLogin(String senhaDescriptografada, UsuarioDTO usuarioDTO, RedirectAttributes attributes,
+    public String executarLogin(String senhaDescriptografada, UsuarioEntity usuarioEntity, RedirectAttributes attributes,
                                 Model model) {
         try{
-            usuarioDTO = repository.findByEmailIgnoreCase(usuarioDTO.getEmail());
+            usuarioEntity = repository.findByEmailIgnoreCase(usuarioEntity.getEmail());
 
-            if (usuarioDTO != null && encoder.matches(senhaDescriptografada, usuarioDTO.getSenha())){
-                if (usuarioDTO.getGrupo().equals("ADMINISTRADOR")){
+            if (usuarioEntity != null && encoder.matches(senhaDescriptografada, usuarioEntity.getSenha())){
+                if (usuarioEntity.getGrupo().equals("ADMINISTRADOR")){
                     attributes.addFlashAttribute("grupo", "ADMINISTRADOR");
-                } else if (usuarioDTO.getGrupo().equals("ESTOQUISTA")) {
+                } else if (usuarioEntity.getGrupo().equals("ESTOQUISTA")) {
                     attributes.addFlashAttribute("grupo", "ESTOQUISTA");
                 }
                 return "redirect:/pagina-principal";

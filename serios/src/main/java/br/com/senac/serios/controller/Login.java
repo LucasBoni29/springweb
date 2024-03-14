@@ -40,14 +40,12 @@ public class Login {
 
     @PostMapping("/login")
     public String login(@Valid UsuarioEntity usuarioEntity, BindingResult result, RedirectAttributes attributes, Model model) throws NoSuchAlgorithmException {
-        ModelMapper modelMapper = new ModelMapper();
         if(result.hasErrors()){
             List<String> listaErros = service.capturarMensagensErros(result);
             attributes.addFlashAttribute("mensagem", listaErros);
             return "redirect:/home";
         }else{
-            UsuarioDTO usuarioDTO =  modelMapper.map(usuarioEntity, UsuarioDTO.class);
-            return service.executarLogin(usuarioDTO.getSenha(), usuarioDTO, attributes, model);
+            return service.executarLogin(usuarioEntity.getSenha(), usuarioEntity, attributes, model);
         }
 
     }
