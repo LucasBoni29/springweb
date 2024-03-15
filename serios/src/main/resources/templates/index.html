@@ -38,15 +38,17 @@
                 <td th:text="${usuario.grupo}"></td>
                 <td>
                     <span th:if="${usuario.status == 1}">Ativo</span>
-                    <span th:if="${usuario.status == 2}">Inativo</span>
+                    <span th:if="${usuario.status == 0}">Inativo</span>
                 </td>
                 <!-- Coluna de ações -->
                 <td>
                     <!-- Botão de editar (abre o modal de edição) -->
                     <button type="button" class="btn btn-info btn-sm" data-toggle="modal" th:data-target="'#editarUsuarioModal' + ${usuario.id}">Editar</button>
                     <!-- Links para desativar ou excluir o usuário -->
-                    <a th:href="@{'/usuario/desativar/' + ${usuario.id} + '/' + 2}" class="btn btn-warning btn-sm" th:if="${usuario.status == 1}">Desativar</a>
-                    <a th:href="@{'/usuario/desativar/' + ${usuario.id} + '/' + 1}" class="btn btn-warning btn-sm" th:if="${usuario.status == 2}">Ativar</a>
+                    <!-- Formulário para desativar o usuário -->
+                    <form th:action="@{'/usuario/desativar/' + ${usuario.id}}" method="post" onsubmit="return confirmarMudancaStatus()" style="display: inline">
+                        <button type="submit" class="btn btn-warning btn-sm">Alterar Status</button>
+                    </form>
                 </td>
             </tr>
             </tbody>
@@ -67,6 +69,30 @@
                     <!-- Aqui você pode incluir um formulário para editar o usuário -->
                     <!-- Os campos do formulário podem ser preenchidos com os dados do usuário selecionado -->
                     <form>
+                        <div class="form-group">
+                            <label>Nome:</label>
+                            <label>
+                                <input type="text" class="form-control" th:value="${usuario.nome}">
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label>Email:</label>
+                            <label>
+                                <input type="email" class="form-control" th:value="${usuario.email}">
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label>Nome:</label>
+                            <label>
+                                <input type="text" class="form-control" th:value="${usuario.nome}">
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label>Email:</label>
+                            <label>
+                                <input type="email" class="form-control" th:value="${usuario.email}">
+                            </label>
+                        </div>
                         <div class="form-group">
                             <label>Nome:</label>
                             <label>
@@ -151,6 +177,11 @@
     </div>
 
 </body>
+    <script>
+        function confirmarMudancaStatus() {
+            return confirm("Tem certeza que deseja mudar o status do usuário selecionado?")
+        }
+    </script>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>

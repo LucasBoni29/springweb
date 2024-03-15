@@ -10,7 +10,7 @@ public interface UsuariosService {
 
     List<UsuarioDTO> listarUsuarios(String nome);
 
-    void alterarStatusUsuario(Long id, Integer status);
+    void alterarStatusUsuario(Long id);
 
     void cadastrarUsuario();
 

@@ -34,13 +34,15 @@ public class Usuarios {
         List<UsuarioDTO> listaUsuario = service.listarUsuarios(nome);
 
         modelAndView.addObject("usuarios", listaUsuario);
+
+        modelAndView.addObject("usuariosForm", new UsuarioEntity());
         return modelAndView;
     }
 
-    @PutMapping("/desativar/{id}")
-    public String desativarUsuario(@PathVariable Long id, @RequestParam Integer status) {
-        service.alterarStatusUsuario(id, status);
-        return "redirect:/listar";
+    @PostMapping("/desativar/{id}")
+    public String desativarUsuario(@PathVariable Long id, RedirectAttributes attributes) {
+        service.alterarStatusUsuario(id);
+        return "redirect:/usuario/listar";
     }
 
     @GetMapping("/index")

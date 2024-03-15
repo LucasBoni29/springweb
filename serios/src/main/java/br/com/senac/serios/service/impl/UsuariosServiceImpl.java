@@ -49,7 +49,7 @@ public class UsuariosServiceImpl implements UsuariosService {
     }
 
     @Override
-    public void alterarStatusUsuario(Long id, Integer status) {
+    public void alterarStatusUsuario(Long id) {
         Optional<UsuarioEntity> usuario = usuariosRepository.findById(id);
 
         if (usuario.isEmpty()){
@@ -57,6 +57,8 @@ public class UsuariosServiceImpl implements UsuariosService {
         }
 
         UsuarioEntity usuarioEntity = usuario.get();
+
+        usuarioEntity.setStatus(!usuarioEntity.getStatus());
 
         usuariosRepository.save(usuarioEntity);
     }
