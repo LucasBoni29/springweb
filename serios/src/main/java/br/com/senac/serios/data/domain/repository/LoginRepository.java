@@ -1,6 +1,7 @@
 package br.com.senac.serios.data.domain.repository;
 
 import br.com.senac.serios.data.domain.entity.UsuarioEntity;
+import br.com.senac.serios.dto.UsuarioDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;

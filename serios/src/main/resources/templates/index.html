@@ -1,44 +1,188 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html xmlns:th="http://www.thymeleaf.org" lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gerenciamento de Usuários</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Listagem de Usuários</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
 </head>
 <body>
     <div class="container">
-        <h1>Gerenciamento de Usuários</h1>
-        
-        <div class="filtro">
-            <label for="filtro">Filtrar por nome de usuário:</label>
-            <input type="text" id="filtro" placeholder="Digite o nome do usuário">
-        </div>
+        <h2 class="mt-5 mb-4">Listagem de Usuários</h2>
 
-        <div class="botoes-container">
-            <button id="cadastrarUsuario" class="botao-cadastrar">Cadastrar Usuário +</button>
-        </div>
+        <!-- Botão de cadastro de usuário -->
+        <button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#cadastrarUsuarioModal">Cadastrar Usuário</button>
 
-        <div id="usuarios">
-            <!-- Tabela de usuários será carregada aqui -->
+        <!-- Formulário de pesquisa -->
+        <form class="form-inline mb-3" method="get" action="#" th:action="@{/usuario/listar}">
+            <input class="form-control mr-sm-2" type="search" name="filtro" placeholder="Filtrar por nome" aria-label="Pesquisar">
+            <button type="submit" class="btn btn-outline-success my-2 my-sm-0">Pesquisar</button>
+        </form>
+
+        <table class="table table-striped table-bordered">
+            <thead class="thead-dark">
+            <tr>
+                <th>ID</th>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>Grupo</th>
+                <th>Status</th>
+                <th>Ações</th> <!-- Nova coluna para ações -->
+            </tr>
+            </thead>
+            <tbody>
+            <!-- Aqui é onde você iterará sobre a lista de usuários no Thymeleaf -->
+            <tr th:each="usuario : ${usuarios}">
+                <td th:text="${usuario.id}"></td>
+                <td th:text="${usuario.nome}"></td>
+                <td th:text="${usuario.email}"></td>
+                <td th:text="${usuario.grupo}"></td>
+                <td>
+                    <span th:if="${usuario.status == 1}">Ativo</span>
+                    <span th:if="${usuario.status == 0}">Inativo</span>
+                </td>
+                <!-- Coluna de ações -->
+                <td>
+                    <!-- Botão de editar (abre o modal de edição) -->
+                    <button type="button" class="btn btn-info btn-sm" data-toggle="modal" th:data-target="'#editarUsuarioModal' + ${usuario.id}">Editar</button>
+                    <!-- Links para desativar ou excluir o usuário -->
+                    <!-- Formulário para desativar o usuário -->
+                    <form th:action="@{'/usuario/desativar/' + ${usuario.id}}" method="post" onsubmit="return confirmarMudancaStatus()" style="display: inline">
+                        <button type="submit" class="btn btn-warning btn-sm">Alterar Status</button>
+                    </form>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Modal de edição -->
+    <div th:each="usuario : ${usuarios}" th:id="'editarUsuarioModal' + ${usuario.id}" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="editarUsuarioModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="editarUsuarioModalLabel">Editar Usuário</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- Aqui você pode incluir um formulário para editar o usuário -->
+                    <!-- Os campos do formulário podem ser preenchidos com os dados do usuário selecionado -->
+                    <form>
+                        <div class="form-group">
+                            <label>Nome:</label>
+                            <label>
+                                <input type="text" class="form-control" th:value="${usuario.nome}">
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label>Email:</label>
+                            <label>
+                                <input type="email" class="form-control" th:value="${usuario.email}">
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label>Nome:</label>
+                            <label>
+                                <input type="text" class="form-control" th:value="${usuario.nome}">
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label>Email:</label>
+                            <label>
+                                <input type="email" class="form-control" th:value="${usuario.email}">
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label>Nome:</label>
+                            <label>
+                                <input type="text" class="form-control" th:value="${usuario.nome}">
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label>Email:</label>
+                            <label>
+                                <input type="email" class="form-control" th:value="${usuario.email}">
+                            </label>
+                        </div>
+                        <!-- Adicione os outros campos do formulário conforme necessário -->
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <a href="@{'/usuario/alterar/' + ${usuario.id}}" class="btn btn-primary btn-sm">Salvar</a>
+                </div>
+            </div>
         </div>
     </div>
 
-    <form id="formulario" style="display:none;">
-        <label for="nome">Nome:</label>
-        <input type="text" id="nome" name="nome" required>
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required>
-        <label for="grupo">Grupo:</label>
-        <input type="text" id="grupo" name="grupo">
-        <label for="status">Status:</label>
-        <select id="status" name="status">
-            <option value="Ativo">Ativo</option>
-            <option value="Inativo">Inativo</option>
-        </select>
-        <button type="reset">Cadastrar</button>
-    </form>
+    <!-- Modal de cadastro -->
+    <div id="cadastrarUsuarioModal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="cadastrarUsuarioModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="cadastrarUsuarioModalLabel">Cadastrar Novo Usuário</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <!-- Formulário de cadastro -->
+                    <form th:action="@{/usuario/cadastrar}" method="post" th:object="${usuariosForm}">
+                        <div class="form-group">
+                            <label>Nome:</label>
+                            <label>
+                                <input type="text" class="form-control" th:field="*{nome}" required>
+                                <span class="text-danger" th:if="${#fields.hasErrors('nome')}" th:errors="*{nome}"></span>
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label>Email:</label>
+                            <label>
+                                <input type="email" class="form-control" name="email" required>
+                                <span class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label>Senha:</label>
+                            <label>
+                                <input type="password" class="form-control" name="senha" required>
+                                <span class="text-danger" th:if="${#fields.hasErrors('senha')}" th:errors="*{senha}"></span>
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label>Grupo:</label>
+                            <label>
+                                <select class="form-control" name="status" required>
+                                    <option value="ADMINISTRADOR">ADMINISTRADOR</option>
+                                    <option value="ESTOQUISTA">ESTOQUISTA</option>
+                                </select>
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label>Status:</label>
+                            <label>
+                                <select class="form-control" name="status" required>
+                                    <option value="1">Ativo</option>
+                                    <option value="2">Inativo</option>
+                                </select>
+                            </label>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <a href="@{/usuario/cadastrar}" class="btn btn-primary btn-sm">Cadastrar</a>
+                </div>
+            </div>
+        </div>
+    </div>
 
-    <script src="scripts.js"></script>
 </body>
+    <script>
+        function confirmarMudancaStatus() {
+            return confirm("Tem certeza que deseja mudar o status do usuário selecionado?")
+        }
+    </script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </html>

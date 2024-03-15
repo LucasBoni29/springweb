@@ -1,9 +1,11 @@
 package br.com.senac.serios.controller;
 
 import br.com.senac.serios.data.domain.entity.UsuarioEntity;
+import br.com.senac.serios.dto.UsuarioDTO;
 import br.com.senac.serios.service.LoginService;
 import br.com.senac.serios.service.impl.LoginServiceImpl;
 import jakarta.validation.Valid;
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;

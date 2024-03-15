@@ -2,6 +2,7 @@ package br.com.senac.serios.service.impl;
 
 import br.com.senac.serios.data.domain.entity.UsuarioEntity;
 import br.com.senac.serios.data.domain.repository.LoginRepository;
+import br.com.senac.serios.dto.UsuarioDTO;
 import br.com.senac.serios.service.LoginService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;

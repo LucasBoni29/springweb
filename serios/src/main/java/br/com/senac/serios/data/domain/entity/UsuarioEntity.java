@@ -41,5 +41,5 @@ public class UsuarioEntity {
     private String grupo;
 
     @Column(nullable = false)
-    private boolean status;
+    private Boolean status;
 }
