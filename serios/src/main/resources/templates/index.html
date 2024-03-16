@@ -8,6 +8,14 @@
 <body>
     <div class="container">
         <h2 class="mt-5 mb-4">Listagem de Usuários</h2>
+        <div class="alert alert-success alert-dismissible fade show" th:if="${mensagem}">
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <span th:text="${mensagem}"></span>
+        </div>
+        <div class="alert alert-danger alert-dismissible fade show" th:if="${erros}">
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            <span th:text="${erros}"></span>
+        </div>
 
         <!-- Botão de cadastro de usuário -->
         <button type="button" class="btn btn-primary mb-3" data-toggle="modal" data-target="#cadastrarUsuarioModal">Cadastrar Usuário</button>
@@ -43,7 +51,7 @@
                 <!-- Coluna de ações -->
                 <td>
                     <!-- Botão de editar (abre o modal de edição) -->
-                    <button type="button" class="btn btn-info btn-sm" data-toggle="modal" th:data-target="'#editarUsuarioModal' + ${usuario.id}">Editar</button>
+                    <button onclick="preencherFormulario('${usuario.nome}', '${usuario.cpf}', '${usuario.grupo}', '${usuario.status}', '${usuario.senha}')" type="button" class="btn btn-info btn-sm" data-toggle="modal" th:data-target="'#editarUsuarioModal' + ${usuario.id}">Editar</button>
                     <!-- Links para desativar ou excluir o usuário -->
                     <!-- Formulário para desativar o usuário -->
                     <form th:action="@{'/usuario/desativar/' + ${usuario.id}}" method="post" onsubmit="return confirmarMudancaStatus()" style="display: inline">
@@ -68,48 +76,60 @@
                 <div class="modal-body">
                     <!-- Aqui você pode incluir um formulário para editar o usuário -->
                     <!-- Os campos do formulário podem ser preenchidos com os dados do usuário selecionado -->
-                    <form>
+                    <form th:action="@{'/usuario/alterar/' + ${usuario.id}}" method="post" th:object="${usuario}">
                         <div class="form-group">
                             <label>Nome:</label>
                             <label>
-                                <input type="text" class="form-control" th:value="${usuario.nome}">
+                                <input type="text" id="nomeEdit" class="form-control" th:value="*{nome}">
                             </label>
+                            <span class="text-danger" th:if="${#fields.hasErrors('nome')}" th:errors="*{nome}"></span>
                         </div>
                         <div class="form-group">
-                            <label>Email:</label>
+                            <label>CPF:</label>
                             <label>
-                                <input type="email" class="form-control" th:value="${usuario.email}">
+                                <input type="text" id="cpfEdit" class="form-control" th:value="*{cpf}">
                             </label>
+                            <span class="text-danger" th:if="${#fields.hasErrors('cpf')}" th:errors="*{cpf}"></span>
                         </div>
                         <div class="form-group">
-                            <label>Nome:</label>
+                            <label>Grupo:</label>
                             <label>
-                                <input type="text" class="form-control" th:value="${usuario.nome}">
+                                <select class="form-control" id="grupoEdit" th:value="*{grupo}" required>
+                                    <option value="ADMINISTRADOR">ADMINISTRADOR</option>
+                                    <option value="ESTOQUISTA">ESTOQUISTA</option>
+                                </select>
                             </label>
+                            <span class="text-danger" th:if="${#fields.hasErrors('grupo')}" th:errors="*{grupo}"></span>
                         </div>
                         <div class="form-group">
-                            <label>Email:</label>
+                            <label>Status:</label>
                             <label>
-                                <input type="email" class="form-control" th:value="${usuario.email}">
+                                <select class="form-control" id="statusEdit" th:value="*{status}">
+                                    <option value="1">Ativo</option>
+                                    <option value="0">Inativo</option>
+                                </select>
                             </label>
+                            <span class="text-danger" th:if="${#fields.hasErrors('status')}" th:errors="*{status}"></span>
                         </div>
                         <div class="form-group">
-                            <label>Nome:</label>
+                            <label>Senha:</label>
                             <label>
-                                <input type="text" class="form-control" th:value="${usuario.nome}">
+                                <input type="password" id="senhaEdit" class="form-control" th:value="${usuario.senha}">
                             </label>
+                            <span class="text-danger" th:if="${#fields.hasErrors('senha')}" th:errors="*{senha}"></span>
                         </div>
                         <div class="form-group">
-                            <label>Email:</label>
+                            <label>Confirmar senha:</label>
                             <label>
-                                <input type="email" class="form-control" th:value="${usuario.email}">
+                                <input type="password" class="form-control" th:value="${usuario.confirmacaoSenha}">
                             </label>
+                            <span class="text-danger" th:if="${#fields.hasErrors('confirmacaoSenha')}" th:errors="*{confirmacaoSenha}"></span>
                         </div>
                         <!-- Adicione os outros campos do formulário conforme necessário -->
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary btn-sm">Salvar</button>
+                        </div>
                     </form>
-                </div>
-                <div class="modal-footer">
-                    <a href="@{'/usuario/alterar/' + ${usuario.id}}" class="btn btn-primary btn-sm">Salvar</a>
                 </div>
             </div>
         </div>
@@ -138,39 +158,44 @@
                         <div class="form-group">
                             <label>Email:</label>
                             <label>
-                                <input type="email" class="form-control" name="email" required>
+                                <input type="email" class="form-control" th:field="*{email}" required>
                                 <span class="text-danger" th:if="${#fields.hasErrors('email')}" th:errors="*{email}"></span>
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label>CPF:</label>
+                            <label>
+                                <input type="text" class="form-control" th:field="*{cpf}" required maxlength="11">
+                                <span class="text-danger" th:if="${#fields.hasErrors('cpf')}" th:errors="*{cpf}"></span>
                             </label>
                         </div>
                         <div class="form-group">
                             <label>Senha:</label>
                             <label>
-                                <input type="password" class="form-control" name="senha" required>
+                                <input type="password" class="form-control" th:field="*{senha}" required>
                                 <span class="text-danger" th:if="${#fields.hasErrors('senha')}" th:errors="*{senha}"></span>
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label>Confirme sua senha:</label>
+                            <label>
+                                <input type="password" class="form-control" th:field="*{confirmacaoSenha}" required>
+                                <span class="text-danger" th:if="${#fields.hasErrors('confirmacaoSenha')}" th:errors="*{confirmacaoSenha}"></span>
                             </label>
                         </div>
                         <div class="form-group">
                             <label>Grupo:</label>
                             <label>
-                                <select class="form-control" name="status" required>
+                                <select class="form-control" th:field="*{grupo}" required>
                                     <option value="ADMINISTRADOR">ADMINISTRADOR</option>
                                     <option value="ESTOQUISTA">ESTOQUISTA</option>
                                 </select>
                             </label>
                         </div>
-                        <div class="form-group">
-                            <label>Status:</label>
-                            <label>
-                                <select class="form-control" name="status" required>
-                                    <option value="1">Ativo</option>
-                                    <option value="2">Inativo</option>
-                                </select>
-                            </label>
+                        <div class="modal-footer">
+                            <button type="submit" class="btn btn-primary btn-sm">Cadastrar</button>
                         </div>
                     </form>
-                </div>
-                <div class="modal-footer">
-                    <a href="@{/usuario/cadastrar}" class="btn btn-primary btn-sm">Cadastrar</a>
                 </div>
             </div>
         </div>
@@ -180,6 +205,28 @@
     <script>
         function confirmarMudancaStatus() {
             return confirm("Tem certeza que deseja mudar o status do usuário selecionado?")
+        }
+
+        function campoGrupoBlock(){
+            const usuarioId = "${usuario.id}";
+            const usuarioLogadoId = "${usuarioLogado.id}";
+
+            window.onload = function () {
+                let grupoSelect = document.getElementById('grupo');
+
+                if (usuarioId === usuarioLogadoId) {
+                    grupoSelect.disabled = true;
+                }
+            };
+        }
+
+        function preencherFormulario(nome, cpf, grupo, status, senha) {
+            // Preencher os campos do formulário no modal com os dados do usuário
+            document.getElementById('nomeEdit').value = nome;
+            document.getElementById('cpfEdit').value = cpf;
+            document.getElementById('grupoEdit').value = grupo;
+            document.getElementById('statusEdit').value = status;
+            document.getElementById('senhaEdit').value = senha;
         }
     </script>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
