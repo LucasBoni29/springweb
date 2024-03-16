@@ -20,6 +20,7 @@ public class LoginServiceImpl implements LoginService {
 
     private final PasswordEncoder encoder;
 
+    private static final String ALERTA_TIPO_SUCESSO = "mensagem";
 
     @Autowired
     public LoginServiceImpl(LoginRepository loginRepository, PasswordEncoder encoder){
@@ -42,11 +43,11 @@ public class LoginServiceImpl implements LoginService {
                     }
                     session.setAttribute("usuarioLogado", usuarioEntity);
                 }else{
-                    attributes.addFlashAttribute("mensagem", "Usuário inativo no sistema!");
+                    attributes.addFlashAttribute(ALERTA_TIPO_SUCESSO, "Usuário inativo no sistema!");
                     return "redirect:home";
                 }
             }else{
-                attributes.addFlashAttribute("mensagem", "E-mail ou senha inválidos");
+                attributes.addFlashAttribute(ALERTA_TIPO_SUCESSO, "E-mail ou senha inválidos");
                 return "redirect:/home";
             }
             return "redirect:/pagina-principal";

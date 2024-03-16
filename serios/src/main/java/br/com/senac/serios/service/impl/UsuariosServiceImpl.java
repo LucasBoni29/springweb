@@ -22,18 +22,24 @@ import java.util.Optional;
 @Service
 public class UsuariosServiceImpl implements UsuariosService {
 
-
     private final UsuariosRepository usuariosRepository;
+
+    public static final String LISTAR = "listar";
 
     private final ModelMapper modelMapper = new ModelMapper();
 
-    private final PasswordEncoder encoder;
+    private final PasswordEncoder passwordEncoder;
+
+    private static final String ALERTA_TIPO_ERRO = "erros";
+    private static final String ALERTA_TIPO_SUCESSO = "mensagem";
+    
+    private static final String USUARIO_NAO_ENCONTRADO = "Usuário para edição não encontrado no banco de dados";
 
 
     @Autowired
-    public UsuariosServiceImpl(UsuariosRepository usuariosRepository, PasswordEncoder encoder) {
-        this.usuariosRepository = usuariosRepository;
-        this.encoder = encoder;
+    public UsuariosServiceImpl(UsuariosRepository repository, PasswordEncoder encoder) {
+        this.usuariosRepository = repository;
+        this.passwordEncoder = encoder;
     }
 
     @Override
@@ -60,7 +66,7 @@ public class UsuariosServiceImpl implements UsuariosService {
         Optional<UsuarioEntity> usuario = usuariosRepository.findById(id);
 
         if (usuario.isEmpty()){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário com o ID "+id+" não foi encontrado");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, USUARIO_NAO_ENCONTRADO);
         }
 
         UsuarioEntity usuarioEntity = usuario.get();
@@ -71,26 +77,87 @@ public class UsuariosServiceImpl implements UsuariosService {
     }
 
     @Override
+    public String alterarUsuario(Long id, HttpSession session, UsuarioDTO usuarioDTO, RedirectAttributes attributes,
+                                 BindingResult result) {
+        List<String> mensagensErro = new ArrayList<>();
+        UsuarioDTO dto = editarSenha(id, usuarioDTO, mensagensErro);
+        boolean temErros = validacaoCamposAlterar(usuarioDTO, mensagensErro);
+
+        if (result.hasErrors()){
+            List<String> listaErros = capturaMensagensErroResult(result);
+            attributes.addFlashAttribute(ALERTA_TIPO_ERRO, listaErros);
+        }else{
+            if (temErros){
+                mensagensErro.add("Usuário não alterado");
+                attributes.addFlashAttribute(ALERTA_TIPO_ERRO, mensagensErro);
+            }else{
+                UsuarioEntity entity = modelMapper.map(dto, UsuarioEntity.class);
+
+                usuariosRepository.save(entity);
+                attributes.addFlashAttribute(ALERTA_TIPO_SUCESSO, "Usuário editado com sucesso");
+            }
+        }
+
+        return LISTAR;
+    }
+
+
+
+    private UsuarioDTO editarSenha(Long id, UsuarioDTO usuarioDTO, List<String> mensagensErro) {
+        Optional<UsuarioEntity> entity = usuariosRepository.findById(id);
+        if (entity.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, USUARIO_NAO_ENCONTRADO);
+        }
+
+        if (!usuarioDTO.getSenha().isBlank() && !usuarioDTO.getConfirmacaoSenha().isBlank()){
+            if (!usuarioDTO.getSenha().equals(usuarioDTO.getConfirmacaoSenha())){
+                mensagensErro.add("As senhas digitadas não coincidem");
+            }else if (passwordEncoder.matches(usuarioDTO.getConfirmacaoSenha(), entity.get().getSenha())){
+                mensagensErro.add("A nova senha não pode ser igual a senha antiga");
+            }else {
+                usuarioDTO.setSenha(passwordEncoder.encode(usuarioDTO.getConfirmacaoSenha()));
+            }
+        }
+
+        return usuarioDTO;
+    }
+
+    @Override
     public String cadastrarUsuario(UsuarioDTO usuarioDTO, BindingResult result, RedirectAttributes attributes) {
-        boolean temErros = validacaoCampos(usuarioDTO, result, attributes);
+        boolean temErros = validacaoCamposCadastro(usuarioDTO, result);
 
         if (temErros){
-            List<String> listaErros = capturarMensagensErros(result);
-            attributes.addFlashAttribute("erros", "Usuário não cadastrado no sistema");
-            attributes.addFlashAttribute("erros", listaErros);
-            return "listar";
+            List<String> listaErros = capturaMensagensErroResult(result);
+            attributes.addFlashAttribute(ALERTA_TIPO_ERRO, "Usuário não cadastrado no sistema");
+            attributes.addFlashAttribute(ALERTA_TIPO_ERRO, listaErros);
         }else{
-            String senhaCriptografada = encoder.encode(usuarioDTO.getSenha());
+            String senhaCriptografada = passwordEncoder.encode(usuarioDTO.getSenha());
             usuarioDTO.setSenha(senhaCriptografada);
             usuarioDTO.setStatus(1);
 
             salvarUsuario(usuarioDTO);
-            attributes.addFlashAttribute("mensagem", "Usuário salvo com sucesso!");
-            return "listar";
+            attributes.addFlashAttribute(ALERTA_TIPO_SUCESSO, "Usuário salvo com sucesso!");
         }
+        return LISTAR;
     }
 
-    private boolean validacaoCampos(UsuarioDTO usuarioDTO, BindingResult result, RedirectAttributes attributes) {
+    private boolean validacaoCamposAlterar(UsuarioDTO usuarioDTO, List<String> mensagensErro) {
+        if (!isNomeValido(usuarioDTO.getNome()) || usuarioDTO.getNome().length() < 3){
+            mensagensErro.add("O nome deve conter apenas letras e espaços");
+        }
+
+        if (existeEmailOutroUsuario(usuarioDTO.getEmail(), usuarioDTO.getId())) {
+            mensagensErro.add("O e-mail já está cadastrado. Por favor, escolha outro.");
+        }
+
+        return !mensagensErro.isEmpty();
+    }
+
+    private boolean existeEmailOutroUsuario(String email, Long id) {
+        return usuariosRepository.existsByIdNotAndEmailIgnoreCase(id, email);
+    }
+
+    private boolean validacaoCamposCadastro(UsuarioDTO usuarioDTO, BindingResult result) {
         if (!isNomeValido(usuarioDTO.getNome()) || usuarioDTO.getNome().length() < 3){
             result.rejectValue("nome", "nome.invalido", "O nome deve conter apenas letras e espaços");
         }
@@ -103,15 +170,11 @@ public class UsuariosServiceImpl implements UsuariosService {
             result.rejectValue("email", "email.exists", "O e-mail já está cadastrado. Por favor, escolha outro.");
         }
 
-        if (result.hasErrors()){
-            return true;
-        }else{
-            return false;
-        }
+        return result.hasErrors();
     }
 
     private void salvarUsuario(UsuarioDTO usuarioDTO) {
-        String senhaCriptografada = encoder.encode(usuarioDTO.getSenha());
+        String senhaCriptografada = passwordEncoder.encode(usuarioDTO.getSenha());
         usuarioDTO.setSenha(senhaCriptografada);
         usuarioDTO.setStatus(1);
 
@@ -125,43 +188,15 @@ public class UsuariosServiceImpl implements UsuariosService {
     }
 
     @Override
-    public List<String> capturarMensagensErros(BindingResult result) {
+    public List<String> capturaMensagensErroResult(BindingResult result) {
         List<String> mensagensErros = new ArrayList<>();
 
         // Itera sobre todos os erros de campo
-        result.getFieldErrors().forEach(erros -> {
-            mensagensErros.add(erros.getDefaultMessage());
-        });
+        result.getFieldErrors().forEach(erros -> mensagensErros.add(erros.getDefaultMessage()));
 
         return mensagensErros;
     }
 
-    @Override
-    public void alterarUsuario(Long id, HttpSession session, UsuarioDTO usuarioDTO, RedirectAttributes attributes) {
-
-        if (usuarioDTO.getSenha() != null && !usuarioDTO.getSenha().isBlank()
-                && usuarioDTO.getConfirmacaoSenha() != null && !usuarioDTO.getConfirmacaoSenha().isBlank()){
-            confirmarSenha(id, usuarioDTO, attributes);
-        }else {
-            usuarioDTO.setSenha(null);
-        }
-    }
-
-    private void confirmarSenha(Long id, UsuarioDTO usuarioDTO, RedirectAttributes attributes) {
-        Optional<UsuarioEntity> usuario = usuariosRepository.findById(id);
-
-        if (usuario.isEmpty()){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário com o ID "+id+" não foi encontrado");
-        }
-
-        if (encoder.matches(usuarioDTO.getSenha(), usuario.get().getSenha())){
-            usuarioDTO.setSenha(null);
-            usuarioDTO.setConfirmacaoSenha(null);
-        }
-        if (!usuarioDTO.getSenha().equals(usuarioDTO.getConfirmacaoSenha())){
-            attributes.addFlashAttribute("mensagem", "As senhas não coincidem!");
-        }
-    }
 
     private boolean isNomeValido(String nome) {
         return StringUtils.hasText(nome) && nome.matches("^[a-zA-Z\\s]+$");

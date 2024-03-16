@@ -62,16 +62,7 @@ public class Usuarios {
     public String alterarUsuario(@PathVariable Long id, HttpSession session,
                                  @Valid @ModelAttribute("usuarioDtoEdit") UsuarioDTO usuarioDTO, BindingResult result,
                                  RedirectAttributes attributes){
-        if (result.hasErrors()){
-            List<String> listaErros = service.capturarMensagensErros(result);
-            attributes.addFlashAttribute("mensagem", listaErros);
-            return "index";
-        }else{
-            service.alterarUsuario(id, session, usuarioDTO, attributes);
-            if (!attributes.getFlashAttributes().isEmpty()){
-                return "index";
-            }
-            return "redirect:/index";
-        }
+        String caminho = service.alterarUsuario(id, session, usuarioDTO, attributes, result);
+        return "redirect:/usuario/"+caminho;
     }
 }

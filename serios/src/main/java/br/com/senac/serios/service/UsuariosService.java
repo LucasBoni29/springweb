@@ -15,8 +15,8 @@ public interface UsuariosService {
 
     String cadastrarUsuario(UsuarioDTO usuarioDTO, BindingResult result, RedirectAttributes attributes);
 
-    List<String> capturarMensagensErros(BindingResult result);
+    List<String> capturaMensagensErroResult(BindingResult result);
 
-    void alterarUsuario(Long id, HttpSession session, UsuarioDTO usuarioDTO, RedirectAttributes attributes);
+    String alterarUsuario(Long id, HttpSession session, UsuarioDTO usuarioDTO, RedirectAttributes attributes, BindingResult result);
 
 }
