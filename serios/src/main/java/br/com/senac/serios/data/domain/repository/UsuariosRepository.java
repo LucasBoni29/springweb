@@ -10,4 +10,8 @@ import java.util.List;
 @Repository
 public interface UsuariosRepository extends JpaRepository<UsuarioEntity, Long> {
     List<UsuarioEntity> findByNomeContaining(@NonNull String nome);
+
+    boolean existsByEmail(String email);
+
+    boolean existsByIdNotAndEmailIgnoreCase(Long id, String email);
 }

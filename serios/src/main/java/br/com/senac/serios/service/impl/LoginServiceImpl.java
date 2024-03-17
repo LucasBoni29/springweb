@@ -2,8 +2,8 @@ package br.com.senac.serios.service.impl;
 
 import br.com.senac.serios.data.domain.entity.UsuarioEntity;
 import br.com.senac.serios.data.domain.repository.LoginRepository;
-import br.com.senac.serios.dto.UsuarioDTO;
 import br.com.senac.serios.service.LoginService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -20,6 +20,7 @@ public class LoginServiceImpl implements LoginService {
 
     private final PasswordEncoder encoder;
 
+    private static final String ALERTA_TIPO_SUCESSO = "mensagem";
 
     @Autowired
     public LoginServiceImpl(LoginRepository loginRepository, PasswordEncoder encoder){
@@ -29,21 +30,27 @@ public class LoginServiceImpl implements LoginService {
 
     @Override
     public String executarLogin(String senhaDescriptografada, UsuarioEntity usuarioEntity, RedirectAttributes attributes,
-                                Model model) {
+                                Model model, HttpSession session) {
         try{
             usuarioEntity = repository.findByEmailIgnoreCase(usuarioEntity.getEmail());
 
             if (usuarioEntity != null && encoder.matches(senhaDescriptografada, usuarioEntity.getSenha())){
-                if (usuarioEntity.getGrupo().equals("ADMINISTRADOR")){
-                    attributes.addFlashAttribute("grupo", "ADMINISTRADOR");
-                } else if (usuarioEntity.getGrupo().equals("ESTOQUISTA")) {
-                    attributes.addFlashAttribute("grupo", "ESTOQUISTA");
+                if (Boolean.TRUE.equals(usuarioEntity.getStatus())){
+                    if (usuarioEntity.getGrupo().equals("ADMINISTRADOR")){
+                        attributes.addFlashAttribute("grupo", "ADMINISTRADOR");
+                    } else if (usuarioEntity.getGrupo().equals("ESTOQUISTA")) {
+                        attributes.addFlashAttribute("grupo", "ESTOQUISTA");
+                    }
+                    session.setAttribute("usuarioLogado", usuarioEntity);
+                }else{
+                    attributes.addFlashAttribute(ALERTA_TIPO_SUCESSO, "Usuário inativo no sistema!");
+                    return "redirect:home";
                 }
-                return "redirect:/pagina-principal";
             }else{
-                attributes.addFlashAttribute("mensagem", "E-mail ou senha inválidos");
+                attributes.addFlashAttribute(ALERTA_TIPO_SUCESSO, "E-mail ou senha inválidos");
                 return "redirect:/home";
             }
+            return "redirect:/pagina-principal";
 
         }catch (Exception e){
             throw new IllegalArgumentException(e);
