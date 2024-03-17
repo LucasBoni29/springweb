@@ -15,8 +15,10 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.swing.text.html.parser.Entity;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -81,7 +83,7 @@ public class UsuariosServiceImpl implements UsuariosService {
                                  BindingResult result) {
         List<String> mensagensErro = new ArrayList<>();
         UsuarioDTO dto = editarSenha(id, usuarioDTO, mensagensErro);
-        boolean temErros = validacaoCamposAlterar(usuarioDTO, mensagensErro);
+        boolean temErros = validacaoCamposAlterar(session, usuarioDTO, mensagensErro);
 
         if (result.hasErrors()){
             List<String> listaErros = capturaMensagensErroResult(result);
@@ -109,16 +111,21 @@ public class UsuariosServiceImpl implements UsuariosService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, USUARIO_NAO_ENCONTRADO);
         }
 
-        if (!usuarioDTO.getSenha().isBlank() && !usuarioDTO.getConfirmacaoSenha().isBlank()){
-            if (!usuarioDTO.getSenha().equals(usuarioDTO.getConfirmacaoSenha())){
+        if (!usuarioDTO.getSenha().isBlank()){
+            if (!usuarioDTO.getSenha().equals(usuarioDTO.getConfirmacaoSenha()) && !usuarioDTO.getConfirmacaoSenha().isBlank()
+                    || (!usuarioDTO.getSenha().equals(entity.get().getSenha()))){
                 mensagensErro.add("As senhas digitadas não coincidem");
-            }else if (passwordEncoder.matches(usuarioDTO.getConfirmacaoSenha(), entity.get().getSenha())){
+                return usuarioDTO;
+            } else if (passwordEncoder.matches(usuarioDTO.getSenha(), entity.get().getSenha())){
                 mensagensErro.add("A nova senha não pode ser igual a senha antiga");
-            }else {
-                usuarioDTO.setSenha(passwordEncoder.encode(usuarioDTO.getConfirmacaoSenha()));
+                return usuarioDTO;
+            }else if (Objects.equals(usuarioDTO.getSenha(), usuarioDTO.getConfirmacaoSenha())){
+                usuarioDTO.setSenha(passwordEncoder.encode(usuarioDTO.getSenha()));
+                return usuarioDTO;
             }
         }
 
+        usuarioDTO.setSenha(entity.get().getSenha());
         return usuarioDTO;
     }
 
@@ -141,13 +148,18 @@ public class UsuariosServiceImpl implements UsuariosService {
         return LISTAR;
     }
 
-    private boolean validacaoCamposAlterar(UsuarioDTO usuarioDTO, List<String> mensagensErro) {
+    private boolean validacaoCamposAlterar(HttpSession session, UsuarioDTO usuarioDTO, List<String> mensagensErro) {
+        UsuarioEntity usuarioLogado = (UsuarioEntity) session.getAttribute("usuarioLogado");
         if (!isNomeValido(usuarioDTO.getNome()) || usuarioDTO.getNome().length() < 3){
             mensagensErro.add("O nome deve conter apenas letras e espaços");
         }
 
         if (existeEmailOutroUsuario(usuarioDTO.getEmail(), usuarioDTO.getId())) {
             mensagensErro.add("O e-mail já está cadastrado. Por favor, escolha outro.");
+        }
+
+        if (usuarioLogado.getId().equals(usuarioDTO.getId()) && !Objects.equals(usuarioLogado.getGrupo(), usuarioDTO.getGrupo())){
+            mensagensErro.add("O usuário logado não pode alterar o seu próprio grupo");
         }
 
         return !mensagensErro.isEmpty();

@@ -106,7 +106,7 @@
                         <div class="form-group">
                             <label>Grupo:</label>
                             <label>
-                                <select class="form-control" name="grupo" th:value="${usuario.grupo}" required>
+                                <select class="form-control" id="grupoEdit" name="grupo" th:value="${usuario.grupo}" required>
                                     <option value="ADMINISTRADOR">ADMINISTRADOR</option>
                                     <option value="ESTOQUISTA">ESTOQUISTA</option>
                                 </select>
@@ -215,20 +215,6 @@
         function confirmarMudancaStatus() {
             return confirm("Tem certeza que deseja mudar o status do usuário selecionado?")
         }
-
-        function campoGrupoBlock(){
-            const usuarioId = "${usuario.id}";
-            const usuarioLogadoId = "${usuarioLogado.id}";
-
-            window.onload = function () {
-                let grupoSelect = document.getElementById('grupo');
-
-                if (usuarioId === usuarioLogadoId) {
-                    grupoSelect.disabled = true;
-                }
-            };
-        }
-
     </script>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
