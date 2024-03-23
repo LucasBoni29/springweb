@@ -34,20 +34,24 @@ public class LoginServiceImpl implements LoginService {
         try{
             usuarioEntity = repository.findByEmailIgnoreCase(usuarioEntity.getEmail());
 
-            if (usuarioEntity != null && encoder.matches(senhaDescriptografada, usuarioEntity.getSenha())){
-                if (Boolean.TRUE.equals(usuarioEntity.getStatus())){
-                    if (usuarioEntity.getGrupo().equals("ADMINISTRADOR")){
-                        attributes.addFlashAttribute("grupo", "ADMINISTRADOR");
-                    } else if (usuarioEntity.getGrupo().equals("ESTOQUISTA")) {
-                        attributes.addFlashAttribute("grupo", "ESTOQUISTA");
+            if (usuarioEntity != null){
+                if (encoder.matches(senhaDescriptografada, usuarioEntity.getSenha())){
+                    if (Boolean.TRUE.equals(usuarioEntity.getStatus())){
+                        if (usuarioEntity.getGrupo().equals("ADMINISTRADOR")){
+                            attributes.addFlashAttribute("grupo", "ADMINISTRADOR");
+                        } else if (usuarioEntity.getGrupo().equals("ESTOQUISTA")) {
+                            attributes.addFlashAttribute("grupo", "ESTOQUISTA");
+                        }
+                        session.setAttribute("usuarioLogado", usuarioEntity);
+                    }else{
+                        attributes.addFlashAttribute(ALERTA_TIPO_SUCESSO, "Usuário inativo no sistema!");
+                        return "redirect:home";
                     }
-                    session.setAttribute("usuarioLogado", usuarioEntity);
                 }else{
-                    attributes.addFlashAttribute(ALERTA_TIPO_SUCESSO, "Usuário inativo no sistema!");
-                    return "redirect:home";
+                    attributes.addFlashAttribute(ALERTA_TIPO_SUCESSO, "Senha incorreta, tente novamente");
                 }
             }else{
-                attributes.addFlashAttribute(ALERTA_TIPO_SUCESSO, "E-mail ou senha inválidos");
+                attributes.addFlashAttribute(ALERTA_TIPO_SUCESSO, "Usuário não encontrado no sistema, por favor, verifique seu e-mail");
                 return "redirect:/home";
             }
             return "redirect:/pagina-principal";
@@ -62,9 +66,7 @@ public class LoginServiceImpl implements LoginService {
         List<String> mensagensErros = new ArrayList<>();
 
         // Itera sobre todos os erros de campo
-        result.getFieldErrors().forEach(erros -> {
-            mensagensErros.add(erros.getDefaultMessage());
-        });
+        result.getFieldErrors().forEach(erros -> mensagensErros.add(erros.getDefaultMessage()));
 
         return mensagensErros;
     }
