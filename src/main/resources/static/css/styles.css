@@ -1,0 +1,88 @@
+.mensagem{
+    color: red;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    padding: 10px;
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* Estilos para o contêiner de botões */
+.botoes-container {
+    text-align: right;
+    margin-bottom: 20px;
+}
+
+.botao-cadastrar {
+    background-color: #3498db; /* Cor de fundo */
+    color: #fff; /* Cor do texto */
+    border: none;
+    border-radius: 20px; /* Borda arredondada */
+    padding: 10px 20px; /* Espaçamento interno */
+    cursor: pointer;
+    margin-top: 20px;
+}
+
+.botao-cadastrar:hover {
+    background-color: #2980b9; /* Cor de fundo ao passar o mouse */
+}
+
+#filtro {
+    padding: 8px 12px; /* Espaçamento interno */
+    border: 1px solid #ccc; /* Borda */
+    border-radius: 20px; /* Borda arredondada */
+}
+
+#filtro:focus {
+    outline: none; /* Remover contorno ao focar */
+    border-color: #3498db; /* Cor da borda ao focar */
+}
+
+h1 {
+    text-align: center;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+table th,
+table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+table th {
+    background-color: #f2f2f2;
+}
+
+.botao-alterar,
+.botao-inativar {
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    margin-right: 5px;
+}
+
+.botao-filtrar {
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+/* Estilos para os botões de ação */
+.botao-inativar[data-status="Ativo"] {
+    background-color: #28a745; 
+}
+
+.botao-inativar[data-status="Inativo"] {
+    background-color: #dc3545; 
+}
