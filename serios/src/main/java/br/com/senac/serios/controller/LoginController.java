@@ -17,12 +17,12 @@ import java.security.NoSuchAlgorithmException;
 import java.util.List;
 
 @Controller
-public class Login {
+public class LoginController {
 
     private final LoginService service;
 
     @Autowired
-    public Login(LoginServiceImpl loginService) {
+    public LoginController(LoginServiceImpl loginService) {
         this.service = loginService;
     }
 

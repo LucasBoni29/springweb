@@ -17,12 +17,12 @@ import java.util.List;
 
 @Controller
 @RequestMapping("/usuario")
-public class Usuarios {
+public class UsuarioController {
 
     private final UsuariosService service;
 
     @Autowired
-    public Usuarios(UsuariosServiceImpl listarUsuariosService){
+    public UsuarioController(UsuariosServiceImpl listarUsuariosService){
         this.service = listarUsuariosService;
     }
 
