@@ -9,14 +9,14 @@
     </head>
     <body class="container">
         <h1 class="my-4">Editar Produto</h1>
-        <form th:action="@{/produtos/editar}" th:object="${produtoDTO}" method="post" enctype="multipart/form-data">
+        <form th:action="@{/usuario/produtos/editar}" th:object="${produtoDTO}" method="post" enctype="multipart/form-data">
             <input type="hidden" th:field="*{id}">
 
             <!-- Campo para imagem principal -->
             <label for="imagemPrincipal">Imagem Principal:</label>
             <div class="form-group d-flex flex-row align-items-start">
                 <div style="max-width: 150px; max-height: 100px; margin-bottom: 100px;">
-                    <img th:src="@{'/imagem/' + ${produtoDTO.imagemPrincipalString}}" class="img-thumbnail" alt="Imagem Principal" style="max-width: 100%; max-height: 100%;">
+                    <img th:src="@{'/img/' + ${produtoDTO.imagemPrincipalString}}" class="img-thumbnail" alt="Imagem Principal" style="max-width: 100%; max-height: 100%;">
                 </div>
             </div>
 
@@ -53,7 +53,7 @@
             <h3>Outras imagens do produto</h3>
             <div id="imagensDoProduto" class="d-flex flex-wrap align-items-center">
                 <div class="image-preview" th:each="imagem, imagemIndex : ${produtoDTO.imagens}" style="max-width: 150px; margin-right: 10px; margin-bottom: 10px;">
-                    <img th:src="@{'/imagem/' + ${imagem.caminho}}" class="img-thumbnail" alt="Imagem">
+                    <img th:src="@{'/img/' + ${imagem.caminho}}" class="img-thumbnail" alt="Imagem">
                     <!-- <button type="button" class="btn btn-danger btn-sm" onclick="removerImagem('${imagemIndex.index}')">Remover</button> -->
                 </div>
             </div>

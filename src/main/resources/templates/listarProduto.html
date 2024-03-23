@@ -30,12 +30,12 @@
                 <button type="submit" class="btn btn-primary">Buscar</button>
             </form>
         </div>
-        <table class="table mt-3">
+        <table class="table mt-3" style="width: 100%;">
             <thead class="table-dark">
             <tr>
                 <th scope="col">Código</th>
                 <th scope="col">Nome</th>
-                <th scope="col">Quantidade em Estoque</th>
+                <th scope="col">Qtd. em Estoque</th>
                 <th scope="col">Preço</th>
                 <th scope="col">Status</th>
                 <th scope="col">Ações</th>
@@ -50,20 +50,22 @@
                 <td th:text="${produto.precoProduto}"></td>
                 <td th:text="${produto.status ? 'Ativo' : 'Inativo'}"></td>
                 <td>
-                    <a th:href="@{/produtos/{id}/editar(id=${produto.id})}" class="btn btn-info btn-action">Editar</a>
-                    <th:block th:if="${tipoUsuario == 'ADMINISTRADOR'}">
-                        <form th:action="@{/produtos/mudar-status}" th:method="post" th:id="'form-mudar-status-' + ${produto.id}">
-                            <input type="hidden" name="id" th:value="${produto.id}">
-                            <button type="button" class="btn btn-warning btn-action mudar-status">Inativar/Ativar</button>
-                        </form>
-                    </th:block>
-                    <th:block th:if="${tipoUsuario == 'ADMINISTRADOR'}">
-                        <a th:href="@{/produtos/{id}(id=${produto.id})}" class="btn btn-secondary btn-action">Visualizar</a>
-                    </th:block>
+                    <div class="btn-group">
+                        <a th:href="@{/usuario/produtos/{id}/editar(id=${produto.id})}" class="btn btn-info btn-action">Editar</a>
+                        <th:block th:if="${tipoUsuario == 'ADMINISTRADOR'}">
+                            <form th:action="@{/usuario/produtos/mudar-status}" th:method="post" th:id="'form-mudar-status-' + ${produto.id}">
+                                <input type="hidden" name="id" th:value="${produto.id}">
+                                <button type="button" class="btn btn-warning btn-action mudar-status">Alterar Status</button>
+                            </form>
+                        </th:block>
+                        <th:block th:if="${tipoUsuario == 'ADMINISTRADOR'}">
+                            <a th:href="@{/usuario/produtos/{id}(id=${produto.id})}" class="btn btn-secondary btn-action">Visualizar</a>
+                        </th:block>
+                    </div>
                 </td>
             </tr>
             <th:block th:if="${tipoUsuario == 'ADMINISTRADOR'}">
-                <a th:href="@{/usuario/produtos/novo}" style="text-decoration: none;"><span style="font-size: 24px; cursor: pointer;">+</span> Adicionar Produto</a>
+                <a th:href="@{/usuario/produtos/novo}" class="btn btn-primary mb-3" style="text-decoration: none;"><span style="font-size: 24px; cursor: pointer;">+</span> Adicionar Produto</a>
             </th:block>
             </tbody>
         </table>
@@ -71,22 +73,22 @@
         <nav aria-label="Page navigation">
             <ul class="pagination justify-content-center">
                 <li th:if="${produtosPage.hasPrevious()}" class="page-item">
-                    <a class="page-link" th:href="@{/produtos(page=0,keyword=${keyword})}" aria-label="Primeira">
+                    <a class="page-link" th:href="@{/usuario/produtos(page=0,keyword=${keyword})}" aria-label="Primeira">
                         <span aria-hidden="true">Primeira</span>
                     </a>
                 </li>
                 <li th:if="${produtosPage.hasPrevious()}" class="page-item">
-                    <a class="page-link" th:href="@{/produtos(listar?page=${produtosPage.previousPageable().pageNumber},keyword=${keyword})}" aria-label="Anterior">
+                    <a class="page-link" th:href="@{/usuario/produtos(listar?page=${produtosPage.previousPageable().pageNumber},keyword=${keyword})}" aria-label="Anterior">
                         <span aria-hidden="true">Anterior</span>
                     </a>
                 </li>
                 <li th:if="${produtosPage.hasNext()}" class="page-item">
-                    <a class="page-link" th:href="@{/produtos(page=${produtosPage.nextPageable().pageNumber},keyword=${keyword})}" aria-label="Próxima">
+                    <a class="page-link" th:href="@{/usuario/produtos(page=${produtosPage.nextPageable().pageNumber},keyword=${keyword})}" aria-label="Próxima">
                         <span aria-hidden="true">Próxima</span>
                     </a>
                 </li>
                 <li th:if="${produtosPage.hasNext()}" class="page-item">
-                    <a class="page-link" th:href="@{/produtos(page=${produtosPage.totalPages - 1},keyword=${keyword})}" aria-label="Última">
+                    <a class="page-link" th:href="@{/usuario/produtos(page=${produtosPage.totalPages - 1},keyword=${keyword})}" aria-label="Última">
                         <span aria-hidden="true">Última</span>
                     </a>
                 </li>

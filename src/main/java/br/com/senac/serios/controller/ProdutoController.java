@@ -53,7 +53,7 @@ public class ProdutoController {
         model.addAttribute("produtoDTO", produtoDTO);
         model.addAttribute("selectedImagePath", imagemPrincipal.getCaminho());
 
-        return "editar-Produto";
+        return "editarProduto";
     }
 
     /*esse que vai mudar o produto*/
@@ -65,7 +65,7 @@ public class ProdutoController {
         produtoService.editarProduto(produtoDTO, imagens);
 
         attributes.addFlashAttribute("mensagem", "Produto editado com sucesso!");
-        return "redirect:/produtos";
+        return "redirect:/usuario/produtos";
     }
 
     /*listar os produtos*/
@@ -111,7 +111,7 @@ public class ProdutoController {
         } catch (EntityNotFoundException ex) {
             attributes.addFlashAttribute("mensagem", "Produto não encontrado!");
         }
-        return "redirect:/produtos";
+        return "redirect:/usuario/produtos";
     }
 
     @GetMapping("/produtos/{id}")
