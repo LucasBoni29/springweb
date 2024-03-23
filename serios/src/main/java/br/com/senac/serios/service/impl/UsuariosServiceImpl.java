@@ -15,7 +15,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.server.ResponseStatusException;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.swing.text.html.parser.Entity;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -111,21 +110,23 @@ public class UsuariosServiceImpl implements UsuariosService {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, USUARIO_NAO_ENCONTRADO);
         }
 
-        if (!usuarioDTO.getSenha().isBlank()){
-            if (!usuarioDTO.getSenha().equals(usuarioDTO.getConfirmacaoSenha()) && !usuarioDTO.getConfirmacaoSenha().isBlank()
-                    || (!usuarioDTO.getSenha().equals(entity.get().getSenha()))){
-                mensagensErro.add("As senhas digitadas não coincidem");
-                return usuarioDTO;
-            } else if (passwordEncoder.matches(usuarioDTO.getSenha(), entity.get().getSenha())){
-                mensagensErro.add("A nova senha não pode ser igual a senha antiga");
-                return usuarioDTO;
-            }else if (Objects.equals(usuarioDTO.getSenha(), usuarioDTO.getConfirmacaoSenha())){
-                usuarioDTO.setSenha(passwordEncoder.encode(usuarioDTO.getSenha()));
-                return usuarioDTO;
-            }
+        // Verifica se a senha foi fornecida pelo usuário
+        if (usuarioDTO.getSenha().isEmpty()){
+            usuarioDTO.setSenha(null);
         }
 
-        usuarioDTO.setSenha(entity.get().getSenha());
+        // Verifica se a confirmação de senha foi fornecida e se é igual à senha
+        if (usuarioDTO.getConfirmacaoSenha().isEmpty() && usuarioDTO.getSenha() != null && usuarioDTO.getSenha().equals(usuarioDTO.getConfirmacaoSenha())) {
+            mensagensErro.add("As senhas digitadas não coincidem");
+            return usuarioDTO;
+        }
+
+        // Verifica se a senha não foi fornecida e se a confirmação de senha foi
+        if (usuarioDTO.getSenha().isEmpty() && !usuarioDTO.getConfirmacaoSenha().isEmpty()){
+            // Se a senha estiver vazia e a confirmação de senha não, define a senha como a confirmação de senha
+            usuarioDTO.setSenha(passwordEncoder.encode(usuarioDTO.getSenha()));
+        }
+
         return usuarioDTO;
     }
 
