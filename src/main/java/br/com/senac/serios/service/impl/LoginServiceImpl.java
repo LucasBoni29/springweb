@@ -49,6 +49,7 @@ public class LoginServiceImpl implements LoginService {
                     }
                 }else{
                     attributes.addFlashAttribute(ALERTA_TIPO_SUCESSO, "Senha incorreta, tente novamente");
+                    return "redirect:/home";
                 }
             }else{
                 attributes.addFlashAttribute(ALERTA_TIPO_SUCESSO, "Usuário não encontrado no sistema, por favor, verifique seu e-mail");

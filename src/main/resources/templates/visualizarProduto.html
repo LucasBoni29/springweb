@@ -54,20 +54,19 @@
             }
         </style>
     </head>
-
     <body>
-
         <div class="container mt-5">
             <div class="row">
-
                 <div class="col-md-6">
-                    <h4>Imagens do Produto</h4>
                     <div id="carouselImagens" class="carousel slide" data-ride="carousel">
                         <div class="carousel-inner">
                             <div th:each="imagem, iterStat : ${produto.imagens}" th:classappend="${iterStat.index == 0} ? 'carousel-item active' : 'carousel-item'">
-                                <img th:src="@{'/imagem/' + ${imagem.caminho}}" alt="Imagem do Produto" class="d-block w-100">
+                                <div class="carousel-image-wrapper border rounded"> <!-- Adicionando classes do Bootstrap -->
+                                    <img th:src="@{'/img/' + ${imagem.caminho}}" alt="Imagem do Produto" class="d-block w-100">
+                                </div>
                             </div>
                         </div>
+                        <!-- Controles do carrossel -->
                         <a class="carousel-control-prev" href="#carouselImagens" role="button" data-slide="prev">
                             <span class="carousel-control-prev-icon" aria-hidden="true"></span>
                             <span class="sr-only">Anterior</span>
@@ -77,9 +76,10 @@
                             <span class="sr-only">Próximo</span>
                         </a>
                     </div>
+
                     <div class="row mt-3 thumbnail-list">
                         <div class="col-md-2" th:each="imagem : ${produto.imagens}">
-                            <img th:src="@{'/imagem/' + ${imagem.caminho}}" alt="Imagem do Produto" class="img-thumbnail"
+                            <img th:src="@{'/img/' + ${imagem.caminho}}" alt="Imagem do Produto" class="img-thumbnail"
                                  onclick="selecionarImagem(this)">
                         </div>
                     </div>
@@ -87,33 +87,25 @@
                 </div>
                 <div class="col-md-6">
                     <h2 th:text="${produto.nome}"></h2>
-
                     <p th:text="'Avaliação: ' + ${produto.avaliacao}"></p>
-
-
                 </div>
-
             </div>
         </div>
-
         <!-- Bootstrap JS and jQuery -->
         <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
         <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-
         <script>
-                                     function selecionarImagem(element) {
-                                         var caminhoImagem = element.getAttribute('src');
-                                         $('#carouselImagens .carousel-inner .carousel-item').removeClass('active');
-                                         $('#carouselImagens .carousel-inner .carousel-item').each(function () {
-                                             if ($(this).find('img').attr('src') === caminhoImagem) {
-                                                 $(this).addClass('active');
-                                                 return false;
-                                             }
-                                         });
-                                     }
+             function selecionarImagem(element) {
+                 var caminhoImagem = element.getAttribute('src');
+                 $('#carouselImagens .carousel-inner .carousel-item').removeClass('active');
+                 $('#carouselImagens .carousel-inner .carousel-item').each(function () {
+                     if ($(this).find('img').attr('src') === caminhoImagem) {
+                         $(this).addClass('active');
+                         return false;
+                     }
+                 });
+             }
         </script>
-
     </body>
-
 </html>

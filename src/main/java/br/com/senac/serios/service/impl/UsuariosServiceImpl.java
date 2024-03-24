@@ -122,7 +122,7 @@ public class UsuariosServiceImpl implements UsuariosService {
         }
 
         // Verifica se a senha não foi fornecida e se a confirmação de senha foi
-        if (usuarioDTO.getSenha().isEmpty() && !usuarioDTO.getConfirmacaoSenha().isEmpty()){
+        if (!usuarioDTO.getSenha().isEmpty() && !usuarioDTO.getConfirmacaoSenha().isEmpty()){
             // Se a senha estiver vazia e a confirmação de senha não, define a senha como a confirmação de senha
             usuarioDTO.setSenha(passwordEncoder.encode(usuarioDTO.getSenha()));
         }

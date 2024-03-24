@@ -41,6 +41,14 @@ public class ProdutoServiceImpl implements ProdutoService {
 
     @Transactional
     @Override
+    public void editarProdutoEstoquista(ProdutoDTO produtoDTO) {
+        ProdutoEntity produtoEntity = produtoRepository.findById(produtoDTO.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Produto não encontrado com o ID: " + produtoDTO.getId()));
+        produtoEntity.setQtdEstoque(produtoDTO.getQtdEstoque());
+    }
+
+    @Transactional
+    @Override
     public void editarProduto(ProdutoDTO produtoDTO, List<MultipartFile> imagens) throws IOException {
         ProdutoEntity produtoEntity = produtoRepository.findById(produtoDTO.getId())
                 .orElseThrow(() -> new EntityNotFoundException("Produto não encontrado com o ID: " + produtoDTO.getId()));

@@ -34,7 +34,7 @@ public class LoginController {
 
     @GetMapping("/pagina-principal")
     public String paginaPrincipal(){
-        return "pagina-principal";
+        return "paginPrincipal";
     }
 
     @PostMapping("/login")

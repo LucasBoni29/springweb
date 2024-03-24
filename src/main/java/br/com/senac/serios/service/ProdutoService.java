@@ -13,6 +13,8 @@ import java.util.List;
 @Service
 public interface ProdutoService {
 
+    void editarProdutoEstoquista(ProdutoDTO produtoDTO);
+
     void editarProduto(ProdutoDTO produtoDTO, List<MultipartFile> imagens)throws IOException;
 
     void salvarImagensProdutoEdicao(ProdutoEntity produtoEntity, List<MultipartFile> imagens, int indiceImagemPrincipal) throws IOException;
